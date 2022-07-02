@@ -6,8 +6,8 @@ Node tree2 = new(2, new(1), new(3));
 Node expectedTree1 = new(4, new(7, new(9), new(6)), new(2, new(3), new(1)));
 Node expectedTree2 = new(2, new(3), new(1));
 
-var treeInverted1 = Solution.InvertTree(tree1);
-var treeInverted2 = Solution.InvertTree(tree2);
+var treeInverted1 = Solution.InvertTreeInteratively(tree1);
+var treeInverted2 = Solution.InvertTreeInteratively(tree2);
 
 if (Compare.CompareTree.Equals(treeInverted1, expectedTree1))
     Console.WriteLine("tree 1 ok");
@@ -36,7 +36,7 @@ class Node
 
 static class Solution
 {
-    public static Node? InvertTree(Node? rootNode)
+    public static Node? InvertTreeRecursively(Node? rootNode)
     {
         if (rootNode == null)
             return null;
@@ -45,8 +45,30 @@ static class Solution
         rootNode.Left = rootNode.Right;
         rootNode.Right = holdingNode;
 
-        InvertTree(rootNode.Left);
-        InvertTree(rootNode.Right);
+        InvertTreeRecursively(rootNode.Left);
+        InvertTreeRecursively(rootNode.Right);
+
+        return rootNode;
+    }
+
+    public static Node? InvertTreeInteratively(Node? rootNode)
+    {
+        Queue<Node?> queue = new Queue<Node?>();
+        queue.Enqueue(rootNode);
+
+        while (queue.Count > 0)
+        {
+            Node? node = queue.Dequeue();
+            if (node is null)
+                continue;
+
+            Node? holdingNode = node.Left;
+            node.Left = node.Right;
+            node.Right = holdingNode;
+
+            queue.Enqueue(node.Left);
+            queue.Enqueue(node.Right);
+        }
 
         return rootNode;
     }
